@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="assets/css/public.css">
+  <script src="js/config.js"></script>
+  <script src="js/axios.min.js"></script>
+  <title>Document</title>
+</head>
+<style>
+  .content_box {
+    padding: 88px 0 32px 0 ;
+    width: 880px;
+    margin: auto;
+  }
+  .title {
+    width: 100%;
+    margin-bottom: 26px;
+    
+  }
+  .detail {
+    color: #aaa;
+    margin-bottom: 26px;
+    display: flex;
+    align-items: center;
+  }
+  .text {
+    font-size: 18px;
+    line-height: 2;
+  }
+</style>
+<body>
+  <div class="content_box">
+    <h1 class="title" id="title">元首外交·心相近｜“收到习主席复信是我人生重要时刻”</h1>
+    <div class="detail" id="detail">
+
+    </div>
+
+    <div class="text" id="text">
+
+    </div>
+  </div>
+
+  <script>
+    window.onload = () => {
+      let {search} = window.location;
+      let temp = search.replace('?','').split('&');
+      let params = {};
+      for(let item of temp) {
+        let p = item.split('=');
+        params[p[0]] = p[1];
+      }
+      getDetail(params.id);
+    }
+
+    function setReaded(id, readNum) {
+      axios.post(`/news/update`, {
+          id,
+          readNum: readNum+=1
+      })
+    }
+
+    function getDetail(id) {
+      axios.post(`/news/detail`, {
+          id
+      }).then(result => {
+        let res = result.data;
+        if(res.code == 100) {
+          let title = document.getElementById('title');
+          title.innerHTML = res.data.title;
+          let text = document.getElementById('text');
+          text.innerHTML = res.data.text;
+          let detail = document.getElementById('detail');
+          detail.innerHTML = `  <span style="margin-right: 26px;">类型:${res.data.type}</span>
+          <span style="margin-right: 26px;">作者:${res.data.createUser}</span>
+          <span style="margin-right: 26px;">阅读数:${res.data.readNum || 1}</span>
+          <span>${res.data.createTime}</span>`
+          }
+
+          setReaded(res.data.id, (res.data.readNum || 0));
+      })
+    }
+  </script>
+</body>
+</html>

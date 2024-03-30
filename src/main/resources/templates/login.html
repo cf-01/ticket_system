@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="assets/css/public.css">
+  <script src="js/config.js"></script>
+  <script src="js/axios.min.js"></script>
+  <title>登录</title>
+</head>
+<style>
+  .login_bg {
+    width: 100vw;
+    height: 100vh;
+    background-image: url(assets/images/temp_login2.jpg);
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login_box,
+  .regist_box {
+    width: 480px;
+    padding: 60px 60px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+  }
+
+  .regist_box {
+    display: none;
+  }
+
+  .login_input {
+    height: 48px;
+    display: block;
+    margin-bottom: 28px;
+    width: 100%;
+  }
+
+  .login_btn {
+    background-color: rgba(240, 65, 66);
+    color: #fff;
+    font-size: 18px;
+    width: 100%;
+    height: 48px;
+    margin-top: 20px;
+  }
+</style>
+
+<body>
+  <div class="login_bg">
+    <div class="login_box" id="loginBox">
+      <input class="login_input" id="username" placeholder="请输入账号" />
+      <input class="login_input" id="password" placeholder="请输入密码" type="password" />
+      <span id="tip1" style="color: red;display: none;"></span>
+      <a href="javascript:void(0)" onclick="onRegist()" style="align-self: flex-end;">注册</a>
+      <button class="login_btn" onclick="login()">登录</button>
+    </div>
+    <div class="regist_box" id="registBox">
+      <input class="login_input" id="rUsername" placeholder="请输入账号" />
+      <input class="login_input" id="rPhone" placeholder="请输入手机号" />
+      <input class="login_input" id="rPassword" placeholder="请输入最少六位数密码" type="password" />
+      <input class="login_input" id="rePassword" placeholder="请再次输入确定密码" type="password" />
+      <span id="tip" style="color: red;display: none;"></span>
+      <a href="javascript:void(0)" onclick="onLogin()" style="align-self: flex-end;">登录</a>
+      <button class="login_btn" onclick="regist()">注册</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function () {
+    }
+    function onRegist() {
+      let login = document.getElementById('loginBox');
+      let regist = document.getElementById('registBox');
+      login.style.display = 'none';
+      regist.style.display = 'flex';
+      return false;
+    }
+
+    function setTip(value, id, time) {
+      let dom = document.getElementById(id);
+        dom.style.display = 'block';
+        dom.innerHTML = value;
+        setTimeout(() => {
+          dom.style.display = 'none'
+        }, time || 5000)
+    }
+
+    function regist() {
+      let u = document.getElementById('rUsername');
+      let p = document.getElementById('rPassword');
+      let ph= document.getElementById('rPhone');
+      let p1 = document.getElementById('rePassword');
+      if(u.value.length == 0 || p.value.length < 6 || p1.value.length < 6) {
+        setTip(`账号或密码格式不正确！`, 'tip');
+        return;
+      }
+      if(p.value != p1.value) {
+        setTip(`两次输入密码不一致，请重新输入！`, 'tip')
+        return;
+      }
+      let account = u.value;
+      let password = p.value;
+      let phoneNum = ph.value;
+      axios.post(URL+`/user/register`,{
+          account:account,
+          password:password,
+          phoneNum:phoneNum
+      }).then(result=>{
+        let res = result.data;
+        if(res.code == 100) {
+          setTip('注册成功！', 'tip');
+        }
+      }).catch(err=>{
+      })
+    }
+
+    function onLogin() {
+      let login = document.getElementById('loginBox');
+      let regist = document.getElementById('registBox');
+      login.style.display = 'flex';
+      regist.style.display = 'none';
+      return false;
+    }
+
+    function login() {
+      let u = document.getElementById('username');
+      let p = document.getElementById('password');
+      let account = u.value;
+      let password = p.value;
+      if(account.length == 0 || password.length < 6) {
+        setTip('账号或密码格式不正确，请重新输入！', 'tip1');
+        return;
+      }
+      axios.post(URL+`/user/login`,
+        {account, password}
+      ).then(result =>{
+        let res = result.data;
+        if(res.code == 100) {
+          console.log("res>>>>",result)
+          window.localStorage.setItem('userinfo', JSON.stringify({account, password}));
+          window.localStorage.setItem('userid', res.data);
+          if(account == "admin"){
+            window.open('/service', '_self')
+          }else{
+            window.open('/ticket', '_self')
+          }
+          
+        }
+      }).catch(err=>{
+      })
+    }
+  </script>
+</body>
+
+</html>

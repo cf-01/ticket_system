@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ticket_system?useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    cache: false
+    mode: HTML
+
+mysql:
+  path: C:\Program Files\MySQL\MySQL Server 8.0\bin\
+  db:
+    name: ticket_system
+    user: root
+    password: 123456
+backup:
+  path: C:\backup\backup.sql

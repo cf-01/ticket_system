@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "19bfb418-649e-4b1d-a894-67508475dfc4",
+		"name": "toutiao",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13371523"
+	},
+	"item": [
+		{
+			"name": "用户",
+			"item": [
+				{
+					"name": "注册",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account\":\"root\",\n    \"password\":\"123\",\n    \"phoneNum\":\"13655555666\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/user/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "登录",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account\":\"root\",\n    \"password\":\"1123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/user/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "新闻",
+			"item": [
+				{
+					"name": "新增",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\":\"历史\",\n    \"title\":\"二战后的德国如何恢复经济\",\n    \"text\":\"马歇尔计划：1947年，美国提出了马歇尔计划，旨在提供财政援助和经济支持，帮助战后破败的欧洲国家恢复经济。德国成为最大的受益国之一，通过获得美国的援助和资源，加速了经济重建和发展。货币改革：在战后，德国遭受了严重的通货膨胀问题。1948年，德国进行了一次货币改革，引入新的货币（德国马克），并进行了经济调整。这一措施有助于稳定物价，重建信心，为经济恢复奠定了基础。重建基础设施：战争对德国的基础设施造成了巨大破坏。为了恢复经济，德国政府致力于重建交通、通信、能源和其他重要基础设施。这些努力为经济复苏提供了必要的支持，并创造了就业机会。劳动力重组和技术创新：德国在战争后经历了劳动力重组和技术创新。许多人从农村迁往城市，参与到工业生产中。德国的制造业和工程技术能力得到发展和提升，为经济增长提供了动力。欧洲一体化：德国积极参与了欧洲一体化进程，与其他欧洲国家建立了紧密的经济联系。这种合作促进了贸易自由化、市场扩大和投资增加，为德国经济的复苏和增长提供了机遇。教育和培训：德国重视教育和技术培训，致力于提高劳动力的技能水平。通过发展高质量的教育体系和职业培训机构，培养了技术人才和专业人员，满足了经济重建和发展的需求。\",\n    \"userId\":\"4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/news/add",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"news",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "分页",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fuzzyField\":\"马歇尔计划\",\n    \"pageNum\":\"1\",\n    \"pageSize\":\"10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/news/pageList",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"news",
+								"pageList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":1,\n    \"type\":\"历史\",\n    \"title\":\"二战后的德国如何恢复经济\",\n    \"text\":\"马歇尔计划：1947年，美国提出了马歇尔计划，旨在提供财政援助和经济支持，帮助战后破败的欧洲国家恢复经济。德国成为最大的受益国之一，通过获得美国的援助和资源，加速了经济重建和发展。货币改革：在战后，德国遭受了严重的通货膨胀问题。1948年，德国进行了一次货币改革，引入新的货币（德国马克），并进行了经济调整。这一措施有助于稳定物价，重建信心，为经济恢复奠定了基础。重建基础设施：战争对德国的基础设施造成了巨大破坏。为了恢复经济，德国政府致力于重建交通、通信、能源和其他重要基础设施。这些努力为经济复苏提供了必要的支持，并创造了就业机会。劳动力重组和技术创新：德国在战争后经历了劳动力重组和技术创新。许多人从农村迁往城市，参与到工业生产中。德国的制造业和工程技术能力得到发展和提升，为经济增长提供了动力。欧洲一体化：德国积极参与了欧洲一体化进程，与其他欧洲国家建立了紧密的经济联系。这种合作促进了贸易自由化、市场扩大和投资增加，为德国经济的复苏和增长提供了机遇。教育和培训：德国重视教育和技术培训，致力于提高劳动力的技能水平。通过发展高质量的教育体系和职业培训机构，培养了技术人才和专业人员，满足了经济重建和发展的需求。\",\n    \"userId\":\"4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/news/update",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"news",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "删除",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/news/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"news",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查询栏目",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/news/queryAllType",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"news",
+								"queryAllType"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

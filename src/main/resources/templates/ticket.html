@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="assets/css/public.css">
+	<script src="js/config.js"></script>
+	<script src="js/axios.min.js"></script>
+	<title>订票</title>
+</head>
+<style>
+	.header_box {
+		width: 100%;
+		height: 64px;
+		position: relative;
+		top: 0;
+		left: 0;
+		box-shadow: 0 2px 16px rgba(54, 56, 79, .06);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		/* padding: 0 24px; */
+		background-color: #fff;
+		z-index: 999;
+		background-image: linear-gradient(158.2deg, rgb(249 231 166) 26.5%, rgb(254, 254, 254) 86.8%);
+	}
+
+	.btn {
+		position: absolute;
+		right: 40px;
+	}
+
+	.ticker_btn {
+		background-color: #e07417;
+		color: #fff;
+		padding: 10px;
+		width: 150px;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+
+	.login_btn {
+		background-color: #1770e0;
+		color: #fff;
+		padding: 10px;
+		width: 100px;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+
+	.content {
+		width: 98%;
+
+		margin-left: 20px;
+		margin-top: 20px;
+	}
+
+	.tickerInfo {
+		margin-bottom: 10px;
+		box-shadow: 0 2px 16px rgba(54, 56, 79, .06);
+	}
+
+	.title {
+		padding: 10px;
+		background-image: linear-gradient(181.2deg, rgb(181, 239, 249) 10.5%, rgb(254, 254, 254) 86.8%);
+		font-weight: bold;
+	}
+
+	.info {
+		margin: 10px 0 10px 10px;
+		height: 80px;
+	}
+</style>
+
+<body>
+	<div class="header_box">
+		<div class="btn">
+			<button class="ticker_btn" onclick="selectTicket()">个人订单查询</button>
+			<button class="login_btn" onclick="nologin()">退出登录</button>
+		</div>
+	</div>
+	<div class="content" id="contentInfo">
+	</div>
+	<!-- 预订数量 弹框 -->
+	<dialog id="dialog" style="position: relative;
+    top: 200px;
+    left: 810px;
+    width: 200px;">
+        <div>
+            <input class="ticketNumInfo" placeholder="请输入预订票数" type="number" style="width: 190px;text-align: center;" />
+            <input class="ticketUseUser" placeholder="请输入观看人姓名" type="text" style="width: 190px;text-align: center;" oninput="limitInputLength(this, 20)"/>
+            <input class="ticketIdentity" placeholder="请输入观看人身份证" type="text" style="width: 190px;text-align: center;" oninput="limitInputLength(this, 18) "/>
+            <input class="ticketPhnoe" placeholder="请输入观看人手机号" type="text" style="width: 190px;text-align: center;" oninput="limitInputLength(this, 11)"/>
+        </div>
+        <button id="btn-close" style="margin: 10px 0 10px 64px;">确定</button>
+        <button id="btn-close_two" style="margin: 10px 0 10px 64px;" onclick="closeDialogTwo()">关闭</button>
+    </dialog>
+
+	<!-- 查询个人订单 弹框 -->
+	<dialog id="oneTicketdialog" style="position: relative;
+    top: 200px;
+    left: 810px;
+	width: 400px;
+    height: 500px;">
+		<div class="ticketSelect" id="selectInfo">
+		</div>
+		<button id="btn-close_one" style="margin: 10px 0 22px 155px;">关闭</button>
+	</dialog>
+
+
+	<script type="text/javascript">
+		var userinfo;
+		var userid;
+		window.onload = function () {
+			// $(document).ready(function() {
+			userinfo = window.localStorage.getItem('userinfo');
+			userinfo = userinfo ? JSON.parse(userinfo) : null;
+			userid = window.localStorage.getItem('userid');
+			userid = userid ? userid : null;
+			// console.log(userinfo)
+			// console.log(userid)
+			let html = ''
+			let container = document.getElementById("contentInfo");
+			let newList = [];
+
+
+			// 订单接口
+			axios.post(URL + `/show/selectAllShow`, {}).then(result => {
+				let res = result.data;
+				if (res.code == 100) {
+					res.data.forEach((item,index) => {
+						html += `
+							<div class="tickerInfo">
+								<div class="title">票务详情${index+1}</div>
+								<div class="info">
+									<span>票名：${item.name}</span>
+									<span style="margin-left:10px">内容：${item.content}</span>
+									<span style="margin-left:10px">余量：${item.ticketNum}</span>
+									<span style="margin-left:10px">进场时间：${item.showTime}</span>
+									<span style="margin-left:10px">价格：${item.price}</span>
+									<button style="position: absolute;right: 40px;" onclick="reserve(${item.id})">预订</button>
+								</div>
+							</div>
+						`
+					})
+					container.innerHTML = html;
+				}
+			}).catch(err => {})
+			// })
+		}
+
+		function limitInputLength(inputElement, maxLength) {
+			if (inputElement.value.length > maxLength) {
+				inputElement.value = inputElement.value.slice(0, maxLength);
+			}
+		}
+
+		function nologin() {
+			window.localStorage.removeItem('userinfo');
+			window.open('/login', '_self');
+		}
+
+        function closeDialog() {
+            let dialog = document.querySelector("#dialog");
+            dialog.close();
+        }
+
+        function closeDialogTwo() {
+            let btnClose = document.querySelector("#btn-close_two");
+            let dialog = document.querySelector("#dialog");
+            // 关闭
+            btnClose.addEventListener("click", function () {
+                dialog.close();
+            });
+        }
+
+		function reserve(id) {
+			// console.log("2.....", window.localStorage.getItem('userinfo'))
+			document.querySelector("dialog").showModal()
+			let btnOpen = document.querySelector("#btn-open");
+			let btnClose = document.querySelector("#btn-close");
+			let dialog = document.querySelector("#dialog");
+
+
+
+			// 确定
+			btnClose.addEventListener("click", function () {
+                var ticketNum = document.getElementsByClassName("ticketNumInfo")[0].value
+                if(ticketNum <= 0){
+                    alert("预订票数必须大于0");
+                    return false;
+                }
+
+                var ticketIdentity = document.getElementsByClassName("ticketIdentity")[0].value
+                // 身份证验证，这里只检查长度和是否包含字母或特殊字符
+                var identityPattern = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+                if (!identityPattern.test(ticketIdentity)) {
+                    alert("请输入正确的身份证号码");
+                    return false;
+                }
+                var ticketUseUser = document.getElementsByClassName("ticketUseUser")[0].value
+                if (ticketUseUser == "") {
+                    alert("观看人姓名不能为空");
+                    return false;
+                }
+
+                var ticketPhnoe = document.getElementsByClassName("ticketPhnoe")[0].value
+                // 手机号验证，这里只检查长度
+                var phonePattern = /^1[3-9]\d{9}$/;
+                if (!phonePattern.test(ticketPhnoe)) {
+                    alert("请输入正确的手机号码");
+                    return false;
+                }
+
+				dialog.close();
+				let obj = {
+				showId: id,
+				userId: userid,
+				ticketNum: ticketNum,
+					useUser:ticketUseUser,
+					identity: ticketIdentity,
+					phone: ticketPhnoe
+			};
+				// 预订接口
+				axios.post(URL + `/order/addOrder`, obj).then(result => {
+					let res = result.data;
+					if (res.code == 100) {
+						alert(res.data)
+						window.location.reload();
+					}
+				}).catch(err => {})
+				// })
+			});
+		}
+
+		function selectTicket() {
+
+			let userId = userid;
+			// 查询个人订单接口
+			axios.post(URL + `/order/selectByUserId`, {
+				userId
+			}).then(result => {
+				let res = result.data;
+				if (res.code == 100) {
+					let contentHtml = ''
+					let containers = document.getElementById("selectInfo");
+					console.log("res.?>>>>>>>",res)
+					if (res.data && res.data.length > 0) {
+						res.data.forEach((item,index) => {
+							contentHtml += `
+								<div class="tickerInfo">
+									<div class="title">订单详情${index+1}
+									<button id="refundId" style="position: absolute;right: 20px;" onclick="refund('${item.id}','${item.state}')">退票</button>
+									<button id="refundId" style="position: absolute;right: 80px;" onclick="makeTicket('${item.id}','${item.state}')">使用</button>
+									</div>
+									
+									<div style="display:flex;padding:10px">
+										<div style="display:grid">
+											<span>名称：${item.showName == null ? '无' : item.showName}</span>
+											<span>内容：${item.showContent == null ? '无' : item.showContent}</span>
+											<span>使用人：${item.useUser == null ? '无' : item.useUser}</span>
+											<span>购票人：${item.buyUser == null ? '无' : item.buyUser}</span>
+											<span>预订时间：${item.createTime == null ? '无' : item.createTime}</span>
+											<span>有效时间：${item.showTime == null ? '无' : item.showTime}</span>
+											<span>是否使用：${item.state == 0 ? '未使用' : item.state == 1 ? '已退票' : '已使用'}</span>
+										</div>
+										<div style="display:grid;margin-left:20px">
+											<span>已购票数：${item.buyNum}张</span>
+										</div>
+									</div>
+								</div>	
+								`
+						})
+
+
+					}else {
+						contentHtml = `
+					<div class="title>订单详情</div>
+					`
+					}
+					containers.innerHTML = contentHtml;
+				}
+				
+			}).catch(err => {})
+			// })
+
+
+
+			document.querySelector("#oneTicketdialog").showModal()
+			let btnOpen = document.querySelector("#btn-open");
+			let btnClose = document.querySelector("#btn-close_one");
+			let dialog = document.querySelector("#oneTicketdialog");
+			// 关闭
+			btnClose.addEventListener("click", function () {
+				dialog.close();
+
+			});
+		}
+
+		function refund(id,state) {
+			console.log("status>>>>>",state)
+            if (state === '1') {
+                alert('已退票，不允许再点击！');
+            } else {
+                if (state === '3') {
+                    alert('已使用，不允许退票')
+                }else {
+                    // t退票接口
+                    axios.post(URL + `/order/editOrder`, {
+                        id:id,
+                        flag:1
+                    }).then(result => {
+                        let res = result.data;
+                        if (res.code == 100) {
+                            if(state === '1'){
+                                alert("已退票！")
+                            }else{
+                                alert("退票成功！")
+                                window.location.reload();
+                            }
+                        }
+                    }).catch(err => {})
+                }
+            }
+
+		}
+
+        function makeTicket(id,state) {
+			console.log("status>>>>>",state)
+            if (state !== '0' ) {
+                alert('该票已失效，请勿重复点击！');
+            } else {
+                // 使用接口
+                axios.post(URL + `/order/editOrder`, {
+                    id:id,
+                    flag:3
+                }).then(result => {
+                    let res = result.data;
+                    if (res.code == 100) {
+                        if(state === '3'){
+                            alert("已使用！")
+                        }else{
+                            alert("使用成功！")
+                            window.location.reload();
+                        }
+                    }
+                }).catch(err => {})
+            }
+
+		}
+	</script>
+</body>
+
+</html>

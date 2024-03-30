@@ -1,0 +1,32 @@
+* , body{
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input {
+  border: none;
+  height: 36px;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+input:focus-visible {
+  outline: none;
+}
+
+button {
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+}
+
+textarea {
+  border: none;
+  height: 36px;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+textarea:focus-visible {
+  outline: none;
+}
